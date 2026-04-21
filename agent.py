@@ -50,12 +50,18 @@ def product_lookup(product_name: str) -> str:
     import json
 
     # Load product data from products.json
-    with open("products.json", "r") as f:
+    with open("products.json", "r", encoding="utf-8") as f:
         product_prices = json.load(f)
 
-    # Return the product price if found
+    # Try exact match first
     if product_name in product_prices:
         return str(product_prices[product_name])
+
+    # Fallback: handle simple plural forms like "Gamma Widgets" -> "Gamma Widget"
+    if product_name.endswith("s"):
+        singular_name = product_name[:-1]
+        if singular_name in product_prices:
+            return str(product_prices[singular_name])
 
     # Otherwise return available products
     available_products = ", ".join(product_prices.keys())
